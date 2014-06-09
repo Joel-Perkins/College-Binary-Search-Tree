@@ -1,0 +1,105 @@
+--Joel Perkins
+--Lab 5 Grading Option A
+--Binary Search Tree Main
+
+with Ada.Text_IO, BinarySearchTree;
+use Ada.Text_IO, BinarySearchTree;
+
+procedure main is
+package MyInt_IO is new Ada.Text_IO.Integer_IO(integer);
+use MyInt_IO;
+------------------------------------------------------------
+--Variable declaration
+------------------------------------------------------------
+choice1,choice2: integer;
+
+Pt, Root: BinarySearchTreePoint;
+
+name, phone: String10;
+
+
+-------------------------------------------------------------
+--Start of program
+-------------------------------------------------------------
+begin
+
+--create root.
+makeRoot(root);
+
+--Give Name the value of 10 spaces.
+for I in 1..10 loop
+   Name(I) := ' ';
+end loop;
+
+loop
+
+    put("Enter 1 to insert, 2 to search, 3 to traverse, 0 to exit: ");
+    get(choice1);
+    new_line;
+
+--Case structure for getting user input.
+case choice1 is
+
+when 0 =>
+    exit;
+
+when 1 =>
+    put("Enter Customer Name: ");
+    for I in 1..10 loop
+        get(Name(I));
+        exit when end_of_line ;
+    end loop;
+
+    new_line;
+    put("Enter Customer Phone Number: ");
+    for I in 1..10 loop
+        get(Phone(I));
+        exit when end_of_line ;
+    end loop;
+    new_line;
+    InsertBinarySearchTree(root,name,phone);
+
+    --gives name and phone the value of 10 spaces.
+    for I in 1..10 loop
+        Name(I) := ' ';
+        Phone(I) := ' ';
+    end loop;
+    
+
+when 2 =>
+    put("Enter 1 for Iterative, 2 for Recursive: ");
+    get(choice2);
+    new_line;
+    put("Enter Name: ");
+
+    --Grabs name 1 character at a time till 10 characters.
+    for I in 1..10 loop
+        get(Name(I));
+        exit when end_of_line ;
+    end loop;
+    new_line;
+ 
+   if choice2 = 1 then
+      FindCustomerIterative(root,name,Pt);
+   elsif choice2 = 2 then
+      FindCustomerRecursive(root,name,Pt);
+   end if;
+
+   --Gives Name a value of 10 spaces.
+   for I in 1..10 loop
+       Name(I) := ' ';
+   end loop;
+   new_line;
+
+when 3 =>
+        traverseFromFind(Pt,root);
+
+when others =>
+    put("Not an Option: ");
+
+end case;
+
+end loop;
+   --At exiting program traverse tree useing threads and give it as output.
+   traverseUsingInOrder(root);
+end main;
