@@ -1,0 +1,275 @@
+--Joel Perkins
+--Lab 5 Grading Option A
+--Binary Search Tree
+
+with Ada.Text_IO;
+use Ada.Text_IO;
+with Ada.Characters.Handling;
+use Ada.Characters.Handling;
+
+
+package body BinarySearchTree  is
+
+--Inserts node into tree in order. Done Iteratively.
+procedure InsertBinarySearchTree
+   (Root: in out BinarySearchTreePoint;
+   custName:in String10; custPhone: in String10) is
+
+Temp1,Temp2: BinarySearchTreePoint;
+
+begin
+
+if Root.Ltag = false then
+    Temp2 := Root.Llink;
+    Loop
+        if custName < Temp2.Info.Name then
+            if Temp2.Ltag = true then
+                Temp2 := Temp2.Llink;
+            elsif Temp2.Ltag = false then
+                newNode(Temp1,custName,custPhone);
+                Temp1.Llink := Temp2.Llink;
+                Temp1.LTag := Temp2.Ltag;
+                Temp2.Llink := Temp1;
+                Temp2.LTag := true;
+                Temp1.Rlink := Temp2;
+                Temp1.Rtag := false;
+                exit;
+            end if;
+        elsif custName > Temp2.Info.Name then
+            if Temp2.Rtag = false then
+                newNode(Temp1,custName,custPhone);
+                Temp1.Rlink := Temp2.Rlink;
+                Temp1.Rtag := Temp2.Rtag;
+                Temp2.Rlink := Temp1;
+                Temp2.Rtag := true;
+                Temp1.LLink := Temp2;
+                Temp1.Ltag := false;
+                exit;
+            elsif Temp2.Rtag = true then
+                Temp2 := Temp2.Rlink;
+            end if;
+        end if;
+    end loop;
+elsif Root.Ltag = true then
+   newNode(Temp2,custName,custPhone);
+   Temp2.Llink := Root;
+   Temp2.Ltag := false;
+   Temp2.Rtag := false;
+   Temp2.Rlink := Root;
+   Root.Llink := Temp2;
+   Root.Ltag := false;
+end if;
+
+end InsertBinarySearchTree;
+
+--Searches for customer giving output when both is and is not found. Done iteratively.
+procedure FindCustomerIterative(Root: in BinarySearchTreePoint;
+CustomerName:in String10;CustomerPoint:out BinarySearchTreePoint) is
+
+Temp:BinarySearchTreePoint;
+
+begin
+
+If Root.Ltag = true then
+   put("Empty Tree");
+   new_line;
+else
+   Temp := Root.Llink;
+   Loop
+        if CustomerName < Temp.Info.Name then
+            if Temp.Ltag = true then
+               Temp := Temp.Llink;	    
+	    else
+		put("Not found");
+                exit;
+            end if;
+        end if;
+        if CustomerName = Temp.Info.Name then
+            CustomerPoint := Temp;
+            CustomerPhone(Temp.Info.PhoneNumber);
+            exit;
+        end if;
+
+        if CustomerName > Temp.Info.Name then
+          if Temp.Rtag = true then
+              Temp := Temp.Rlink;
+	  else
+	      put("Not found");
+              exit;
+          end if;
+        end if;
+
+   end loop;
+end if;
+
+end FindCustomerIterative;
+
+--procedure that recursively calls itself to find a select node.
+procedure FindCustomerRecursive
+(Root: in BinarySearchTreePoint;CustomerName:in String10;
+CustomerPoint:out BinarySearchTreePoint) is
+
+begin
+If Root = Null then
+   put("Empty Tree");new_line;
+else
+
+Loop
+    if CustomerName < Root.Info.Name then
+        if Root.Ltag = true then
+            FindCustomerRecursive(Root.Llink,CustomerName,CustomerPoint);
+        else
+	    put("Not found");
+	    exit;
+        end if;
+        exit;
+    end if;
+        if CustomerName = Root.Info.Name then
+            CustomerPhone(Root.Info.PhoneNumber);
+            CustomerPoint := Root;
+            new_line;
+            exit;
+        end if;
+
+
+        if CustomerName > Root.Info.Name then
+            if Root.Rtag = true then
+                FindCustomerRecursive(Root.Rlink,CustomerName,CustomerPoint);
+            else
+	        put("Not found");
+                exit;
+            end if;
+            exit;
+        end if;
+        exit;
+end loop;
+
+end if;
+
+end FindCustomerRecursive;
+
+procedure CustomerName(Name: in String10)  is
+I: integer := 1;
+begin
+    while Is_Basic(Name(I)) = true loop
+        put(Name(I));
+        I := I + 1;
+    end loop;
+end CustomerName;
+
+
+procedure CustomerPhone(Phone: in String10)  is
+I:integer:=1;
+begin
+
+for I in 1..10 loop
+   put(Phone(I));
+end loop;
+
+end CustomerPhone;
+
+--iteratively move to the nodes in order successor by using checking links and tags. 
+Function InOrderSuccessor(TreePoint: in BinarySearchTreePoint)return BinarySearchTreePoint  is
+Temp:BinarySearchTreePoint;
+
+begin
+
+Temp := TreePoint.Rlink;
+
+If TreePoint.RTag = false then
+    null;
+    if Temp.Llink = TreePoint then
+        return Temp;
+    end if;
+elsif Temp.Ltag=true  then
+    while Temp.LTag = true  loop
+         Temp := Temp.LLink;
+    end loop;
+    return Temp;
+end if;
+    return Temp;
+end InOrderSuccessor;
+
+procedure makeRoot(Root: out BinarySearchTreePoint) is
+temp:string10;
+begin
+    newNode(Root,temp,temp);
+    Root.Rlink := Root;
+    Root.llink := Root;
+    Root.Rtag := true;
+    Root.ltag := true;
+end makeRoot;
+
+--Quickly create and initialize a node of storage.
+procedure newNode(newNode: out BinarySearchTreePoint;
+   custName: in String10; custPhone: in String10) is
+begin
+    newNode := new Node;
+    newNode.Info.Name := custName;
+    newNode.Info.PhoneNumber := custPhone;
+end newNode;
+
+--Traverses tree from last found node;
+procedure traverseFromFind(CustomerPoint: in BinarySearchTreePoint;
+   Root: in BinarySearchTreePoint) is
+
+Temp1,Temp2: BinarySearchTreePoint;
+I: Integer := 0;
+
+begin
+Temp1 := CustomerPoint;
+If Root.Ltag = true then
+  put("Tree is Empty");
+  new_line;
+else
+    Loop
+        While Temp1.Ltag = true loop
+            If Temp1.Llink /= Temp2 then
+                Temp1 := Temp1.Llink;
+                if Temp1 = CustomerPoint then
+                    I := I + 1;
+                end if;
+            end if;
+            exit when Temp1.LLink = Temp2;
+        end loop;
+        exit when I = 1;
+        CustomerName(Temp1.Info.Name);
+        new_line;
+        If Temp1.Rtag = false then
+            Temp1 := Temp1.Rlink;
+            Temp2 := Temp1.Llink;
+            if Temp1 = CustomerPoint then
+                I := I+1;
+            end if;
+        elsif Temp1.Rtag = true then
+            Temp2 := Temp1;
+            Temp1 := Temp1.Rlink;
+            if Temp1 = CustomerPoint then
+                I := I+1;
+            end if;
+        end if;
+        If Temp1 = Root then
+            Temp1 := Root.Llink;
+        end if;
+end loop;
+end if;
+end traverseFromFind;
+
+--procedure that uses InOrderSuccessor to travers and print tree.
+procedure traverseUsingInOrder(Root: in BinarySearchTreePoint)is
+Temp:BinarySearchTreePoint;
+begin
+
+Temp := Root.Llink;
+
+loop
+   CustomerName(Temp.Info.Name);
+   new_line;
+   CustomerPhone(Temp.Info.PhoneNumber);
+   new_line;
+   exit when (Temp.Rlink = Root);
+   Temp := InOrderSuccessor(Temp);
+end loop;
+end traverseUsingInOrder;
+
+end BinarySearchTree;
